@@ -1,0 +1,38 @@
+PS C:\Users\Buhamzok\Desktop\RECESS\portfolio> npx wrangler deploy
+
+ ⛅️ wrangler 4.93.1 (update available 4.94.0)
+─────────────────────────────────────────────
+
+Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+🌀 Building list of assets...
+✨ Read 11 files from the assets directory C:\Users\Buhamzok\Desktop\RECESS\portfolio\dist
+🌀 Starting asset upload...
+🌀 Found 8 new or modified static assets to upload. Proceeding with upload...
++ /index.html
++ /gemma4good_challange.jpg
++ /assets/index-DuKCUiwx.js
++ /logo.svg
++ /llm_study.jpg
++ /trustlink_system.jpg
++ /kimi_figma_plugin.jpg
++ /assets/index-CseNGZYa.css
+Uploaded 2 of 8 assets
+Uploaded 5 of 8 assets
+Uploaded 8 of 8 assets
+✨ Success! Uploaded 8 files (4.18 sec)
+
+Total Upload: 0.33 KiB / gzip: 0.24 KiB
+
+X [ERROR] A request to the Cloudflare API (/accounts/b7a7d7ffbcf0cabb826b41a84d4839f0/workers/scripts/buhamzok-portfolio) failed.
+
+  Invalid _redirects configuration:
+  Line 1: Infinite loop detected in this rule. This would cause a redirect to strip `.html` or
+  `/index` and end up triggering this rule again. [code: 100324]
+
+  
+  If you think this is a bug, please open an issue at:
+  https://github.com/cloudflare/workers-sdk/issues/new/choose
+
+
+🪵  Logs were written to "C:\Users\Buhamzok\AppData\Roaming\xdg.config\.wrangler\logs\wrangler-2026-05-24_19-25-25_546.log"
+PS C:\Users\Buhamzok\Desktop\RECESS\portfolio> 

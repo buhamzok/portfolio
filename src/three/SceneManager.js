@@ -12,15 +12,15 @@ export function initScene(container) {
   renderer.toneMappingExposure = 1.2;
   container.appendChild(renderer.domElement);
 
-  // Crystalline Cube
-  const cubeGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+  // ─── Sentient Cube ────────────────────────────────────────────
+  const cubeGeo = new THREE.BoxGeometry(1.4, 1.4, 1.4);
   const cubeMat = new THREE.MeshPhysicalMaterial({
     color: 0xFF6B00,
     metalness: 0.1,
     roughness: 0.05,
-    transmission: 0.9,
+    transmission: 0.85,
     transparent: true,
-    opacity: 0.3,
+    opacity: 0.25,
     side: THREE.DoubleSide,
   });
   const cube = new THREE.Mesh(cubeGeo, cubeMat);
@@ -28,99 +28,157 @@ export function initScene(container) {
 
   // Edges
   const edges = new THREE.EdgesGeometry(cubeGeo);
-  const lineMat = new THREE.LineBasicMaterial({ color: 0xFF6B00, transparent: true, opacity: 0.8 });
+  const lineMat = new THREE.LineBasicMaterial({ color: 0xFF6B00, transparent: true, opacity: 0.6 });
   const edgeLines = new THREE.LineSegments(edges, lineMat);
   cube.add(edgeLines);
 
-  // Inner Core
-  const coreGeo = new THREE.IcosahedronGeometry(0.35, 1);
+  // Inner Core (the "eye")
+  const coreGeo = new THREE.IcosahedronGeometry(0.32, 2);
   const coreMat = new THREE.MeshStandardMaterial({
     color: 0xFF4500,
     emissive: 0xFF4500,
     emissiveIntensity: 2,
-    roughness: 0.4,
+    roughness: 0.3,
   });
   const core = new THREE.Mesh(coreGeo, coreMat);
   scene.add(core);
 
+  // Outer glow shell (grows when excited)
+  const glowGeo = new THREE.IcosahedronGeometry(0.55, 2);
+  const glowMat = new THREE.MeshBasicMaterial({
+    color: 0xFF6B00,
+    transparent: true,
+    opacity: 0.0,
+    wireframe: true,
+  });
+  const glowShell = new THREE.Mesh(glowGeo, glowMat);
+  scene.add(glowShell);
+
   // Lights
-  const light1 = new THREE.PointLight(0xFF6B00, 3, 10);
+  const light1 = new THREE.PointLight(0xFF6B00, 2, 12);
   light1.position.set(2, 2, 2);
   scene.add(light1);
-
-  const light2 = new THREE.PointLight(0xFF6B00, 3, 10);
+  const light2 = new THREE.PointLight(0xFF6B00, 2, 12);
   light2.position.set(-2, -2, 2);
   scene.add(light2);
-
-  const ambient = new THREE.AmbientLight(0xffffff, 0.3);
+  const ambient = new THREE.AmbientLight(0xffffff, 0.25);
   scene.add(ambient);
 
   // Floating Particles
   const particleCount = 200;
   const particlesGeo = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3);
-  for (let i = 0; i < particleCount * 3; i++) {
-    positions[i] = (Math.random() - 0.5) * 8;
-  }
+  for (let i = 0; i < particleCount * 3; i++) positions[i] = (Math.random() - 0.5) * 8;
   particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const particlesMat = new THREE.PointsMaterial({
-    color: 0xFF6B00,
-    size: 0.02,
-    transparent: true,
-    opacity: 0.3,
-  });
+  const particlesMat = new THREE.PointsMaterial({ color: 0xFF6B00, size: 0.02, transparent: true, opacity: 0.25 });
   const particles = new THREE.Points(particlesGeo, particlesMat);
   scene.add(particles);
 
-  // State for interactions
+  // ─── State ────────────────────────────────────────────────────
   let mouseX = 0, mouseY = 0;
-  let targetRotX = -0.3, targetRotY = 0.5;
-  let isHovered = false;
-  let explosionTime = 0;
-  let isExploding = false;
+  let rawMouseX = window.innerWidth / 2;
+  let rawMouseY = window.innerHeight / 2;
+  let prevMouseX = rawMouseX;
+  let prevMouseY = rawMouseY;
+  let mouseSpeed = 0;
+  let hoverTarget = null; // element tagName
+  let idleTime = 0;
+  let isExploding = false, explosionTime = 0;
   let particlesBurst = [];
+  let searchPhase = 0;
   let animId;
-
-  // Animation loop
   const clock = new THREE.Clock();
+
+  // Smooth rotation targets
+  let curRotX = -0.3, curRotY = 0.5, curRotZ = 0;
+  let targetRotX = -0.3, targetRotY = 0.5, targetRotZ = 0;
 
   function animate() {
     animId = requestAnimationFrame(animate);
-    const time = clock.getElapsedTime();
+    const t = clock.getElapsedTime();
+    const dt = clock.getDelta(); // just to advance
 
-    // Core pulse
-    const pulse = 1 + Math.sin(time * 2) * 0.15;
-    core.scale.set(pulse, pulse, pulse);
-    coreMat.emissiveIntensity = 2 + Math.sin(time * 3) * 0.5;
+    // ── Mouse speed decay ──
+    mouseSpeed *= 0.92;
+    idleTime += 0.016;
 
-    // Cube hover tilt
-    if (isHovered) {
-      targetRotY = mouseX * 0.5;
-      targetRotX = -mouseY * 0.5;
-      lineMat.opacity = 1;
-      coreMat.emissive.setHex(0xFF6B00);
+    // ── Determine target rotation from SCREEN cursor position ──
+    // Map full page coordinates to rotation angles so cube ALWAYS looks at the cursor
+    const screenW = window.innerWidth;
+    const screenH = window.innerHeight;
+    // Centered coordinates [-1,1]
+    const sx = ((rawMouseX / screenW) * 2 - 1);
+    const sy = -((rawMouseY / screenH) * 2 - 1);
+
+    // Excitement factor: how fast/energetic is cursor movement
+    const excitement = Math.min(mouseSpeed / 30, 1); // 0..1
+
+    if (idleTime > 2.5) {
+      // Searching / idle mode — animate gentle wandering
+      searchPhase += 0.02;
+      targetRotY = Math.sin(searchPhase) * 0.6;
+      targetRotX = Math.sin(searchPhase * 0.7) * 0.4 - 0.2;
+      targetRotZ = Math.sin(searchPhase * 0.4) * 0.15;
     } else {
-      targetRotY = Math.sin(time * 0.3) * 0.3;
-      targetRotX = -0.3 + Math.sin(time * 0.2) * 0.1;
-      lineMat.opacity = 0.6;
-      coreMat.emissive.setHex(0xFF4500);
+      // Looking directly at cursor
+      targetRotY = sx * 0.9; // gaze left-right
+      targetRotX = sy * 0.7; // gaze up-down
+      targetRotZ = sx * 0.15; // slight head tilt
     }
 
-    cube.rotation.y += (targetRotY - cube.rotation.y) * 0.05;
-    cube.rotation.x += (targetRotX - cube.rotation.x) * 0.05;
-    core.rotation.y = -cube.rotation.y;
-    core.rotation.x = -cube.rotation.x;
+    // Lerp toward target (springy follow)
+    const lerpFactor = 0.04 + excitement * 0.08;
+    curRotX += (targetRotX - curRotX) * lerpFactor;
+    curRotY += (targetRotY - curRotY) * lerpFactor;
+    curRotZ += (targetRotZ - curRotZ) * lerpFactor;
 
-    // Background particles drift
+    // Apply to cube
+    cube.rotation.x = curRotX;
+    cube.rotation.y = curRotY;
+    cube.rotation.z = curRotZ;
+
+    // Core (eye) mimics but more reactive
+    const eyeLag = 0.08 + excitement * 0.12;
+    core.rotation.x += (targetRotX - core.rotation.x) * eyeLag;
+    core.rotation.y += (targetRotY - core.rotation.y) * eyeLag;
+
+    // Core position shifts slightly toward cursor (parallax eyeball feel)
+    const pupilShift = 0.08 + excitement * 0.1;
+    core.position.x += (sx * pupilShift - core.position.x) * 0.1;
+    core.position.y += (sy * pupilShift - core.position.y) * 0.1;
+
+    // ── Breathing / Pulse ──
+    const basePulse = 1 + Math.sin(t * 2) * 0.08;
+    const excitedPulse = 1 + Math.sin(t * (5 + excitement * 5)) * (0.12 + excitement * 0.1);
+    core.scale.setScalar(excitedPulse);
+
+    // Core glow intensifies when interacting with buttons/links
+    let targetEmissive = 1.8 + Math.sin(t * 3) * 0.4;
+    if (hoverTarget === 'A' || hoverTarget === 'BUTTON') targetEmissive = 4.5;
+    else if (hoverTarget) targetEmissive = 3.2;
+    else if (excitement > 0.3) targetEmissive += excitement * 2;
+    coreMat.emissiveIntensity += (targetEmissive - coreMat.emissiveIntensity) * 0.08;
+
+    // Edge glow follows excitement
+    const targetEdgeOpacity = (hoverTarget === 'A' || hoverTarget === 'BUTTON') ? 1.0 : (excitement > 0.15 ? 0.9 : 0.5);
+    lineMat.opacity += (targetEdgeOpacity - lineMat.opacity) * 0.06;
+
+    // Glow shell expands on excitement
+    const targetGlow = excitement > 0.2 || hoverTarget ? 0.18 : 0.0;
+    glowMat.opacity += (targetGlow - glowMat.opacity) * 0.05;
+    glowShell.rotation.x += 0.01;
+    glowShell.rotation.y += 0.015;
+
+    // ── Background particles ──
     const posAttr = particles.geometry.attributes.position;
     for (let i = 0; i < particleCount; i++) {
-      posAttr.array[i * 3] += Math.sin(time + i) * 0.001;
-      posAttr.array[i * 3 + 1] += Math.cos(time + i) * 0.001;
+      posAttr.array[i * 3] += Math.sin(t + i) * 0.0006;
+      posAttr.array[i * 3 + 1] += Math.cos(t + i) * 0.0006;
     }
     posAttr.needsUpdate = true;
-    particles.rotation.y = time * 0.05;
+    particles.rotation.y = t * 0.04;
 
-    // Explosion particles
+    // ── Explosion effect ──
     if (isExploding) {
       explosionTime += 0.016;
       particlesBurst.forEach((p) => {
@@ -130,13 +188,8 @@ export function initScene(container) {
       });
       if (explosionTime > 0.8) {
         isExploding = false;
-        particlesBurst.forEach((p) => {
-          scene.remove(p);
-          p.geometry.dispose();
-          p.material.dispose();
-        });
+        particlesBurst.forEach((p) => { scene.remove(p); p.geometry.dispose(); p.material.dispose(); });
         particlesBurst = [];
-        core.scale.set(1, 1, 1);
       }
     }
 
@@ -144,7 +197,7 @@ export function initScene(container) {
   }
   animate();
 
-  // Resize handler
+  // ─── Handlers ─────────────────────────────────────────────────
   function handleResize() {
     const w = container.offsetWidth;
     const h = container.offsetHeight;
@@ -153,24 +206,40 @@ export function initScene(container) {
     renderer.setSize(w, h);
   }
 
-  // Scroll handler
   function handleScroll(scrollPercent) {
-    cube.rotation.z = scrollPercent * Math.PI;
+    // subtle roll from scroll
+    curRotZ += (scrollPercent * Math.PI * 0.3 - curRotZ) * 0.02;
   }
 
-  // Mouse move handler
-  function handleMouseMove(x, y) {
+  function handleMouseMove(x, y, rx, ry) {
+    rawMouseX = rx;
+    rawMouseY = ry;
+    const dx = rx - prevMouseX;
+    const dy = ry - prevMouseY;
+    mouseSpeed = Math.sqrt(dx * dx + dy * dy);
+    prevMouseX = rx;
+    prevMouseY = ry;
+    idleTime = 0;
+
+    // For in-canvas interaction we still keep NDC values if needed later
     mouseX = x;
     mouseY = y;
-    isHovered = true;
   }
 
-  // Click handler
+  function handleMouseOver(el) {
+    hoverTarget = el;
+    idleTime = 0;
+  }
+
+  function handleMouseOut() {
+    hoverTarget = null;
+  }
+
   function handleClick() {
     if (isExploding) return;
     isExploding = true;
     explosionTime = 0;
-
+    idleTime = 0;
     const burstCount = 50;
     const burstGeo = new THREE.SphereGeometry(0.03, 4, 4);
     for (let i = 0; i < burstCount; i++) {
@@ -190,7 +259,6 @@ export function initScene(container) {
     }
   }
 
-  // Window resize listener
   window.addEventListener('resize', handleResize);
 
   return {
@@ -199,26 +267,19 @@ export function initScene(container) {
     handleResize,
     handleScroll,
     handleMouseMove,
+    handleMouseOver,
+    handleMouseOut,
     handleClick,
     dispose() {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
-      particlesBurst.forEach((p) => {
-        scene.remove(p);
-        p.geometry.dispose();
-        p.material.dispose();
-      });
-      if (renderer) {
-        renderer.domElement.remove();
-        renderer.dispose();
-      }
+      particlesBurst.forEach((p) => { scene.remove(p); p.geometry.dispose(); p.material.dispose(); });
+      if (renderer) { renderer.domElement.remove(); renderer.dispose(); }
     }
   };
 }
 
 export function destroy(instance) {
   if (!instance) return;
-  if (typeof instance.dispose === 'function') {
-    instance.dispose();
-  }
+  if (typeof instance.dispose === 'function') instance.dispose();
 }

@@ -1,0 +1,238 @@
+You are a lead frontend engineering team managing a multi-agent pipeline. 
+Build a production-grade personal portfolio website inspired by a provided 
+design reference. The stack is React + Tailwind CSS + Three.js + GSAP.
+
+=============================================================
+DESIGN REFERENCE ANALYSIS
+=============================================================
+The design has:
+- Full dark background (#0a0a0a base)
+- PRIMARY accent: Orange (#FF6B00 to #FF9A3C gradient range)
+- SECONDARY accent: Deep orange glow (#FF4500 with bloom effect)
+- Navigation: Logo left | Links center | CTA button + theme toggle right
+- Hero: Large headline left | Floating 3D object center-right with 
+  orbiting tech icon cards and stat widgets
+- About: Section number label | Headline | Paragraph | 4 stat cards with icons
+- All glassmorphism cards: backdrop-blur, subtle border, inner glow
+- Scroll indicator bottom-left
+- Right edge: dot navigation
+
+=============================================================
+[PLANNER AGENT] — Run first. No code.
+=============================================================
+Define and output as /docs/spec.md:
+
+1. Full sitemap: Home, About, Work, Skills, Experience, Contact
+2. Component tree with props contracts
+3. Design token system:
+   - Colors: --bg-primary: #0a0a0a, --bg-secondary: #111111
+             --accent-primary: #FF6B00, --accent-glow: #FF4500
+             --text-primary: #FFFFFF, --text-muted: #888888
+             --glass-bg: rgba(255,107,0,0.05)
+             --glass-border: rgba(255,107,0,0.15)
+   - Typography: Inter font, hero headline 72px/bold
+   - Spacing scale, breakpoints
+4. 3D interaction contract:
+   - Which Three.js objects exist and their behaviors on: 
+     scroll | hover | click
+5. Animation timeline (GSAP):
+   - Entry animations per section
+   - Scroll-triggered transitions
+6. File/folder structure
+7. External dependencies list
+
+Output spec.md only. Zero code.
+
+=============================================================
+[DESIGN AGENT] — After Planner
+=============================================================
+Using spec.md:
+
+1. Create /src/styles/tokens.css
+   - All CSS custom properties from spec
+   - Glassmorphism utility classes
+   - Orange glow/bloom utility classes (.glow-sm, .glow-md, .glow-lg)
+   - Scrollbar styling (thin, orange thumb)
+
+2. Create /src/styles/globals.css
+   - Base resets, font imports (Inter via Google Fonts)
+   - Section transitions, cursor custom styling
+
+3. Create component shells (JSX structure only, no logic):
+   - Navbar.jsx
+   - HeroSection.jsx
+   - ThreeCanvas.jsx (Three.js mount point)
+   - StatWidget.jsx (floating glassmorphism card)
+   - TechIconCard.jsx (floating icon badge)
+   - AboutSection.jsx
+   - StatCard.jsx
+   - WorkSection.jsx
+   - SkillsSection.jsx
+   - ExperienceSection.jsx
+   - ContactSection.jsx
+   - DotNav.jsx (right edge navigation)
+   - ScrollIndicator.jsx
+
+All shells: correct imports, props destructuring, className 
+wiring. No business logic yet.
+
+=============================================================
+[THREE.JS AGENT] — After Design Agent
+=============================================================
+Using spec.md — build /src/three/SceneManager.js
+
+Implement the central 3D hero object:
+
+OBJECT: Crystalline orange wireframe cube with inner glowing core
+- Geometry: BoxGeometry with EdgesGeometry overlay
+- Material: MeshPhysicalMaterial, transmission:0.9, roughness:0.05
+  + LineBasicMaterial for edges in #FF6B00
+- Inner core: smaller IcosahedronGeometry, emissive #FF4500, 
+  pulsing scale animation
+- Point lights: 2x orange (#FF6B00), 1x white ambient
+
+INTERACTIONS:
+- Scroll: cube rotates on Y and X axis proportional to scroll 
+  position via ScrollTrigger GSAP
+- Hover: cube tilts 15deg toward mouse position (lerped), 
+  edge glow intensifies, inner core brightens
+- Click: explosive particle burst from center (50 orange 
+  particles, fade out 800ms), cube resets with spring physics
+
+ORBITING ELEMENTS:
+- 3 TechIconCard placeholders orbit the cube on elliptical path
+  (TS, React, and one custom — implemented as HTML overlaid 
+  via CSS3DRenderer)
+- Orbit speed: 0.003 rad/frame, pausable on hover
+
+ENVIRONMENT:
+- Floating dot particles background (200 points, #FF6B00 at 
+  0.3 opacity, slow drift)
+- Post-processing: UnrealBloomPass (threshold:0.8, strength:1.5)
+  for orange glow bloom effect
+
+Export: { initScene, handleScroll, handleMouseMove, handleClick, 
+          destroy }
+
+=============================================================
+[FRONTEND AGENT] — After Design + Three.js Agents
+=============================================================
+Using all prior outputs. Build full pages and wire everything.
+
+NAVBAR:
+- Logo: "buhamzok." with orange period
+- Links: smooth scroll to sections
+- "Let's Talk" button: orange gradient, arrow icon, hover lifts
+- Theme toggle: sun/moon icon, toggles .light-mode on <body>
+- On scroll >50px: navbar gets glass background + blur
+
+HERO SECTION:
+- Label: "SOFTWARE ENGINEER" in orange, letter-spaced
+- H1: "Crafting digital products with" — white
+  "purpose." — orange gradient, slight text-shadow glow
+- Subtext paragraph
+- Two CTAs: "View My Work" (orange filled) + "Download CV" (ghost)
+- Mount ThreeCanvas — takes up right 55% of hero
+- StatWidget components: "25+ Projects" and "15+ Happy Clients"
+  positioned absolutely, floating with subtle CSS float animation
+- TechIconCards: TS badge, React badge positioned around canvas
+- ScrollIndicator bottom-left
+- DotNav right edge: 5 dots, active dot orange, click scrolls 
+  to section
+
+ABOUT SECTION:
+- Section label "01" in orange
+- H2 "About me"
+- Bio paragraph
+- 4 StatCards in a row:
+  - Years Experience | Projects Completed | Happy Clients | Commitment
+  - Each: glassmorphism card, icon top, big number, label below
+  - Hover: card lifts 8px, border brightens to full orange
+
+WORK SECTION:
+- Section label "02"
+- 3 project cards in masonry/grid
+- Each card: project screenshot area (gradient placeholder), 
+  title, tags, hover reveals overlay with "View Project" link
+- Hover: card scales 1.03, orange border appears
+
+SKILLS SECTION:
+- Section label "03"
+- Skills rendered as interactive orbs/bubbles
+- Hover on skill orb: expands, shows proficiency bar, orange glow
+- Click: shows tooltip with years of experience
+
+EXPERIENCE SECTION:
+- Section label "04"
+- Vertical timeline, orange line down center
+- Each node: glassmorphism card, role, company, date, bullets
+- Scroll-triggered: cards slide in alternating left/right
+
+CONTACT SECTION:
+- Section label "05"
+- Split: left has headline + social links, right has form
+- Form fields: dark glass style, orange focus border/glow
+- Submit button: full orange, sends to console.log for now
+- Social icons: GitHub, LinkedIn, Twitter — hover turns orange
+
+GSAP SCROLL ANIMATIONS (apply globally):
+- Each section entry: opacity 0 → 1, y:40 → 0, duration 0.8
+- Stagger children elements by 0.15s
+- Use ScrollTrigger with start:"top 80%"
+
+=============================================================
+[CONTENT AGENT] — Parallel with Frontend Agent
+=============================================================
+Create /src/data/content.json
+
+Populate all copy for Elijah's portfolio:
+- Elijah is a full-stack developer and AI/ML engineer based in 
+  Kampala, Uganda
+- Skills: Python, React, Node.js, TypeScript, Three.js, 
+  TensorFlow, FastAPI, PostgreSQL, Docker, Linux
+- 3 projects:
+  1. Hestia — AI cybersecurity assistant (125M param LLM + RAG)
+  2. VoiceLab — Voice cloning web app (ElevenLabs + React)
+  3. Portfolio OS — This website
+- Experience: 2 roles (invent plausible titles and companies 
+  for Kampala tech scene)
+- Stats: 3+ Years, 20+ Projects, 15+ Clients, 100% Commitment
+- Contact: placeholder email and GitHub/LinkedIn URLs
+
+=============================================================
+[QA AGENT] — Final
+=============================================================
+After all agents complete:
+
+1. Run: npm run build — read output, fix all errors
+2. Run: npm run dev — verify no console errors
+3. Check list:
+   □ Three.js canvas renders without WebGL errors
+   □ Scroll interactions trigger correctly
+   □ All hover states work on cards, buttons, orbs
+   □ Mobile layout doesn't break at 375px, 768px
+   □ All content.json data renders (no hardcoded strings)
+   □ Dot navigation scrolls to correct sections
+   □ No broken imports or missing dependencies
+   □ Tailwind purge doesn't strip dynamic class names
+   □ GSAP ScrollTrigger initializes after DOM mount
+4. Output: /docs/qa-report.md with pass/fail per item
+5. Fix all failures before declaring done
+
+=============================================================
+GLOBAL RULES
+=============================================================
+- Stack: React 18 + Vite + Tailwind CSS 3 + Three.js r160 + 
+  GSAP 3 + @react-three/fiber (optional helper)
+- Every agent reads spec.md before writing a single line
+- No inline styles — all styling via Tailwind classes or 
+  CSS custom properties from tokens.css
+- All Three.js scenes must call destroy() on component unmount
+  to prevent memory leaks
+- Commit-ready: clean file structure, no console.log in 
+  production code (except contact form placeholder)
+- Final project must run with: npm install && npm run dev
+
+Begin with PLANNER AGENT. Output spec.md in full before 
+any other agent proceeds.
+=============================================================
