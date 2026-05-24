@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
+
+:root {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #111111;
+  --accent-primary: #FF6B00;
+  --accent-secondary: #FF9A3C;
+  --accent-glow: #FF4500;
+  --text-primary: #FFFFFF;
+  --text-secondary: #E0E0E0;
+  --text-muted: #888888;
+  --glass-bg: rgba(255,107,0,0.05);
+  --glass-border: rgba(255,107,0,0.15);
+  --glass-border-hover: rgba(255,107,0,0.4);
+
+  --font-primary: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --hero-size: 72px;
+  --h2-size: 48px;
+  --h3-size: 32px;
+  --body-size: 16px;
+  --label-size: 14px;
+  --section-label-size: 16px;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+}
+
+body.light-mode {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --text-primary: #0a0a0a;
+  --text-secondary: #333333;
+  --text-muted: #666666;
+  --glass-bg: rgba(255,107,0,0.08);
+  --glass-border: rgba(255,107,0,0.2);
+  --glass-border-hover: rgba(255,107,0,0.5);
+}
+
+@layer utilities {
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .glass:hover {
+    border-color: var(--glass-border-hover);
+  }
+
+  .glow-sm {
+    box-shadow: 0 0 8px var(--accent-primary);
+  }
+
+  .glow-md {
+    box-shadow: 0 0 24px var(--accent-primary);
+  }
+
+  .glow-lg {
+    box-shadow: 0 0 48px var(--accent-primary), 0 0 96px var(--accent-glow);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-orange {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
+}
+
+/* Selection */
+::selection {
+  background: var(--accent-primary);
+  color: var(--text-primary);
+}

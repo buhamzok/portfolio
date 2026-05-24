@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <clipPath id="circleClip">
+      <circle cx="256" cy="256" r="240" />
+    </clipPath>
+  </defs>
+
+  <!-- Circle dark fill -->
+  <circle cx="256" cy="256" r="240" fill="#0a0a0a" />
+
+  <!-- Orange border stroke -->
+  <circle cx="256" cy="256" r="238" fill="none" stroke="#FF6B00" stroke-width="3" />
+
+  <!-- Background geometric pattern clipped inside circle -->
+  <g clip-path="url(#circleClip)">
+    <!-- Top arcs -->
+    <path d="M-20 -20 L220 -20 A240 240 0 0 1 -20 220 Z" fill="#FF6B00" opacity="0.28" />
+    <path d="M532 532 L292 532 A240 240 0 0 1 532 292 Z" fill="#FF9A3C" opacity="0.22" />
+
+    <!-- Blocks -->
+    <rect x="280" y="10" width="250" height="180" rx="40" fill="#FF4500" opacity="0.18" />
+    <rect x="10" y="280" width="150" height="250" rx="32" fill="#FF6B00" opacity="0.14" />
+    <rect x="380" y="200" width="60" height="180" rx="20" fill="#FF9A3C" opacity="0.24" />
+
+    <!-- Circles -->
+    <circle cx="120" cy="180" r="55" fill="#FF4500" opacity="0.14" />
+    <circle cx="400" cy="360" r="75" fill="#FF6B00" opacity="0.11" />
+    <circle cx="280" cy="80"   r="28" fill="#FF9A3C" opacity="0.35" />
+    <circle cx="80"  cy="380" r="35" fill="#FF4500" opacity="0.22" />
+
+    <!-- Dot accents -->
+    <circle cx="240" cy="160" r="11" fill="#FF6B00" opacity="0.55" />
+    <circle cx="340" cy="260" r="7"  fill="#FF9A3C" opacity="0.65" />
+    <circle cx="160" cy="340" r="9"  fill="#FF4500" opacity="0.45" />
+
+    <!-- Diagonal stripe -->
+    <rect x="120" y="260" width="300" height="14" rx="7" fill="#FF6B00" opacity="0.18" transform="rotate(12 270 266)" />
+  </g>
+
+  <!-- Main B Letter Mark -->
+  <g>
+    <path d="M 168 118 
+             h 90 
+             c 92 0, 115 50, 115 92 
+             c 0 34 -18 55 -55 66 
+             c 36 6, 58 30, 58 70 
+             c 0 56 -45 82 -103 82 
+             h -105 
+             v -310 z"
+          fill="#FF6B00" />
+    <path d="M 202 158 
+             h 48 
+             c 50 0, 60 26, 60 50 
+             c 0 22 -16 42 -50 42 
+             h -58 v -92 z"
+          fill="#0a0a0a" />
+    <path d="M 202 282 
+             h 54 
+             c 56 0, 70 30, 70 58 
+             c 0 36 -28 56 -73 56 
+             h -51 v -114 z"
+          fill="#0a0a0a" />
+  </g>
+
+  <!-- Spark on top right -->
+  <circle cx="368" cy="140" r="18" fill="#FF4500" opacity="0.80" />
+  <circle cx="368" cy="140" r="6"  fill="#ffffff" opacity="0.90" />
+  <circle cx="380" cy="155" r="3"  fill="#FF9A3C" opacity="0.90" />
+
+  <!-- Subtle glow ring -->
+  <circle cx="256" cy="256" r="128" fill="none" stroke="#FF6B00" stroke-width="2" opacity="0.10" />
+</svg>

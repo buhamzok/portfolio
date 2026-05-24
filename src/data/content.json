@@ -1,0 +1,92 @@
+{
+  "personal": {
+    "name": "Elijah Buhamizo",
+    "role": "Software Engineer",
+    "location": "Kampala, Uganda",
+    "bio": "Full-stack developer and AI/ML engineer crafting digital products with purpose. I build intelligent systems, scalable web applications, and developer tools. Currently working on LLM-powered solutions and AI-integrated design tools.",
+    "email": "elijah@example.com"
+  },
+  "stats": {
+    "years": "3+ Years",
+    "projects": "20+ Projects",
+    "clients": "15+ Clients",
+    "commitment": "100% Commitment"
+  },
+  "skills": [
+    { "name": "Python", "proficiency": 95, "years": 4 },
+    { "name": "React", "proficiency": 90, "years": 3 },
+    { "name": "Node.js", "proficiency": 88, "years": 3 },
+    { "name": "TypeScript", "proficiency": 85, "years": 2 },
+    { "name": "Three.js", "proficiency": 75, "years": 1 },
+    { "name": "TensorFlow", "proficiency": 80, "years": 2 },
+    { "name": "FastAPI", "proficiency": 82, "years": 2 },
+    { "name": "PostgreSQL", "proficiency": 78, "years": 2 },
+    { "name": "Docker", "proficiency": 70, "years": 2 },
+    { "name": "Linux", "proficiency": 85, "years": 3 }
+  ],
+  "projects": [
+    {
+      "title": "Kimi Figma Plugin",
+      "description": "AI-powered Figma plugin using LLM streaming via Next.js. Enables real-time AI completions inside Figma design workflows with secure API handling and React-based iframe UI.",
+      "tags": ["TypeScript", "Next.js", "OpenAI", "Figma API"],
+      "image": "/kimi_figma_plugin.jpg",
+      "link": "https://github.com/buhamzok/kimi-figma-plugin"
+    },
+    {
+      "title": "Gemma4Good",
+      "description": "Social-impact ML project leveraging Google's Gemma model for community solutions. Focused on building accessible AI tools that serve real-world needs in local communities.",
+      "tags": ["Python", "LLMs", "Gemma", "Social Impact"],
+      "image": "/gemma4good_challange.jpg",
+      "link": "https://github.com/anzonathan/gemma4good"
+    },
+    {
+      "title": "LLM Study Toolkit",
+      "description": "Comprehensive toolkit for studying and experimenting with large language models. Includes training pipelines, evaluation metrics, and deployment scripts for local and cloud inference.",
+      "tags": ["Python", "LLMs", "Machine Learning", "Research"],
+      "image": "/llm_study.jpg",
+      "link": "https://github.com/buhamzok/llm_study"
+    },
+    {
+      "title": "TrustLink System",
+      "description": "Enterprise trust and verification system for the KS Tech platform. Built secure authentication and data integrity verification with role-based access control.",
+      "tags": ["React", "Node.js", "Security", "Enterprise"],
+      "image": "/trustlink_system.jpg",
+      "link": "https://github.com/KS-Tech-11/trustlink_System"
+    }
+  ],
+  "experience": [
+    {
+      "role": "Full-Stack Developer",
+      "company": "Tech Innovators Uganda",
+      "date": "2023 - Present",
+      "bullets": [
+        "Led development of AI-integrated web applications serving 5000+ users",
+        "Architected scalable Next.js and FastAPI backend systems",
+        "Implemented LLM-powered features reducing manual workload by 60%"
+      ]
+    },
+    {
+      "role": "Software Engineering Intern",
+      "company": "Kampala Digital Labs",
+      "date": "2022 - 2023",
+      "bullets": [
+        "Built React dashboards with real-time data visualization for fintech clients",
+        "Developed REST APIs and PostgreSQL schemas for microservices architecture",
+        "Collaborated on open-source AI tooling projects gaining 200+ GitHub stars"
+      ]
+    }
+  ],
+  "social": {
+    "github": "https://github.com/buhamzok",
+    "linkedin": "https://www.linkedin.com/in/buhamizo-elijah-763104258",
+    "twitter": "https://twitter.com/buhamzok",
+    "credly": "https://www.credly.com/badges/3de9024b-6d24-4e1b-bb61-ffa25b5db57a/public_url"
+  },
+  "badges": [
+    {
+      "title": "Introduction to Cybersecurity",
+      "issuer": "Cisco / Credly",
+      "url": "https://www.credly.com/badges/3de9024b-6d24-4e1b-bb61-ffa25b5db57a/public_url"
+    }
+  ]
+}
