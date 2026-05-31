@@ -11,6 +11,17 @@ const HeroSection = () => {
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Left Text Content */}
         <div className="z-10">
+          {/* Circular Profile Image */}
+          <div className="mb-6">
+            <div className="relative w-24 h-24 rounded-full p-[3px] bg-gradient-to-br from-accent-primary to-accent-glow">
+              <img
+                src="/portfolio_image.png"
+                alt="Elijah Buhamizo"
+                className="w-full h-full rounded-full object-cover border-2 border-bg-primary"
+              />
+            </div>
+          </div>
+
           <span className="text-accent-primary font-mono text-sm tracking-widest uppercase mb-4 block">
             {content.personal.role}
           </span>
